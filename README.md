@@ -1,27 +1,106 @@
-# TestCaseAmx
+# Angular Project - Test for AMX (Front-End Angular Senior)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.16.
+This repository contains an Angular 16 project developed as part of a technical test for a Front-End Angular Senior position at AMX. The project implements a **CRUD for products** and includes a **login screen with profile validation**.
 
-## Development server
+## Features and Technologies
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+- **Angular 16**
+- **PrimeNG**
+- **FontAwesome**
+- **JSON Server** for mock RESTful APIs
+- **RESTful API Integration**
+- **Lazy Loading** for modular architecture
 
-## Code scaffolding
+---
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Getting Started
 
-## Build
+### Prerequisites
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Ensure you have the following installed:
 
-## Running unit tests
+- **Node.js** (v16 or later)
+- **Angular CLI** (v16 or later)
+- **Git** (optional for cloning the repository)
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Installation Steps
 
-## Running end-to-end tests
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/angular-test-project.git
+   cd angular-test-project
+   ```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-## Further help
+3. **Start the JSON Server:**
+   ```bash
+   npm run json-server
+   ```
+   This will launch a mock RESTful API to handle CRUD operations for products.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+4. **Run the Angular application:**
+   ```bash
+   npm start
+   ```
+
+5. Open your browser and navigate to:
+   ```
+   http://localhost:4200
+   ```
+
+---
+
+## Project Structure
+
+```plaintext
+src/
+├── app/
+│   ├── core/            # Shared services and models
+│   ├── features/        # Feature modules (login, product CRUD)
+│   ├── app-routing.module.ts # Lazy loading routes
+│   └── app.module.ts    # Main module
+├── assets/
+│   ├── styles/          # Global SCSS styles
+│   └── mock-data/       # JSON Server mock data
+├── environments/        # Environment configurations
+└── styles.scss          # Global styles entry point
+```
+
+---
+
+## Usage Instructions
+
+1. **Login Screen:**
+   - Enter credentials to access the system. Profile validation is implemented to ensure role-based access.
+
+2. **Product CRUD:**
+   - Create, Read, Update, and Delete products via a user-friendly interface.
+   - Data is persisted using JSON Server.
+
+---
+
+## Custom Scripts
+
+- **Run JSON Server:**
+  ```bash
+  npm run json-server
+  ```
+  Mock API available at `http://localhost:3000`.
+
+- **Start Angular Application:**
+  ```bash
+  npm start
+  ```
+
+---
+
+## Notes
+
+This project was created for evaluation purposes and serves as a demonstration of skills with Angular and related technologies. If you have any questions, feel free to contact me.
+
+**Lucas Martins Lima**  
+*Front-End Angular Senior Developer*
