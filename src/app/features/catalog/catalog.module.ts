@@ -2,15 +2,23 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ProductService } from 'src/app/core/services/product.service';
+import { CatalogService } from 'src/app/core/services/catalog.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { CatalogRoutingModule } from './catalog-routing.module';
 import { CatalogComponent } from './catalog.component';
 
+import { ButtonModule } from 'primeng/button';
+import { DataViewModule } from 'primeng/dataview';
+import { DialogModule } from 'primeng/dialog';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { MenubarModule } from 'primeng/menubar';
 
 const PRIMENG_MODULES = [
-  MenubarModule
+  MenubarModule,
+  DataViewModule,
+  ButtonModule,
+  DialogModule,
+  InputNumberModule
 ]
 
 @NgModule({
@@ -24,6 +32,9 @@ const PRIMENG_MODULES = [
     ReactiveFormsModule,
   ],
   exports: [CatalogComponent],
-  providers: [ProductService, UserService],
+  providers: [
+    CatalogService,
+    UserService
+  ],
 })
 export class CatalogModule {}

@@ -87,7 +87,7 @@ src/
 
 - **Run JSON Server:**
   ```bash
-  npm run json-server
+  json-server --watch db.json
   ```
   Mock API available at `http://localhost:3000`.
 

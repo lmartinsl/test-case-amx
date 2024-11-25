@@ -6,7 +6,7 @@ import { Product } from '../models/product.interface';
 @Injectable({
   providedIn: 'root',
 })
-export class ProductService {
+export class CatalogService {
   private apiUrl = 'http://localhost:3000/products';
 
   constructor(private http: HttpClient) {}
@@ -24,7 +24,7 @@ export class ProductService {
   }
 
   updateProduct(id: number, product: Product): Observable<Product> {
-    return this.http.put<any>(`${this.apiUrl}/${id}`, product);
+    return this.http.put<Product>(`${this.apiUrl}/${id}`, product);
   }
 
   deleteProduct(id: number): Observable<Product> {

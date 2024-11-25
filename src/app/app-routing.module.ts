@@ -12,7 +12,8 @@ const routes: Routes = [
   },
   {
     path: 'catalog',
-    loadChildren: () => import('./features/catalog/catalog.module').then((m) => m.CatalogModule),
+    loadChildren: () =>
+      import('./features/catalog/catalog.module').then((m) => m.CatalogModule),
     canActivate: [authGuard],
   },
   { path: '**', component: LoginComponent },

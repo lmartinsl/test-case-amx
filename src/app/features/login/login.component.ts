@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import {
   catchError,
   debounceTime,
+  distinctUntilChanged,
   of,
   Subject,
   Subscription,
@@ -42,6 +43,7 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
       this.userNameSubject
         .pipe(
           debounceTime(700),
+          distinctUntilChanged(),
           switchMap((userName) => {
             return this._userService.checkUserByUserName(userName).pipe(
               catchError((error) => {
