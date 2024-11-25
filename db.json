@@ -23,18 +23,29 @@
         "rate": 4.1,
         "count": 259
       }
+    }
+  ],
+  "users": [
+    {
+      "userName": "lucas",
+      "name": "Lucas Martins Lima",
+      "password": "lucas123",
+      "profile": "admin",
+      "id": "1"
     },
     {
-      "id": "3b45",
-      "title": "New Product",
-      "price": 99.99,
-      "description": "A new product description",
-      "category": "category",
-      "image": "https://via.placeholder.com/150",
-      "rating": {
-        "rate": 5,
-        "count": 10
-      }
+      "userName": "lari",
+      "name": "Larissa Souza",
+      "password": "lari123",
+      "profile": "seller",
+      "id": "2"
+    },
+    {
+      "userName": "Bruno",
+      "name": "Bruno Santarrosa",
+      "password": "bruno123",
+      "profile": "client",
+      "id": "3"
     }
   ]
 }

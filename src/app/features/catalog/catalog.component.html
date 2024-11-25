@@ -1,1 +1,4 @@
-<p>catalog works!</p>
+<!-- TODO: under construction -->
+<ng-container *ngIf="currentUser$ | async as user">
+  <label>Olá, {{ user.name }}!</label>
+</ng-container>
