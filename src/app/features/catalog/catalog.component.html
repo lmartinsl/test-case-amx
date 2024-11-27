@@ -1,208 +1,262 @@
-<div class="container">
-  <div class="flex justify-content-end mb-3">
-    <input
-      type="text"
-      class="p-inputtext"
-      [(ngModel)]="inputFilter"
-      placeholder="Buscar produtos..."
-      (input)="filterProducts(inputFilter)"
-    />
+<ng-container *ngIf="currentUser$ | async as user">
+  <div class="container">
+    <div class="search-term flex justify-content-between mb-3">
+      <div class="info-user flex flex-column row-gap-2">
+        <span class="font-bold">{{ user.name }}</span>
+        <span class="font-light">{{ getProfileMap(user.profile) }}</span>
+      </div>
+      <input
+        type="text"
+        class="p-inputtext"
+        [(ngModel)]="inputFilter"
+        placeholder="Buscar produtos..."
+        (input)="filterProducts(inputFilter)"
+      />
+    </div>
+
+    <p-dataView
+      #dv
+      [value]="products"
+      [paginator]="true"
+      [rows]="5"
+      [totalRecords]="totalRecords"
+      [loading]="loading"
+      [sortField]="'title'"
+      [sortOrder]="1"
+      layout="list"
+    >
+      <ng-template pTemplate="header">
+        <div class="header-container">
+          <h2>Catálogo de Produtos</h2>
+        </div>
+      </ng-template>
+
+      <ng-template let-product pTemplate="listItem">
+        <div class="product-item">
+          <img
+            [src]="product.image"
+            alt="{{ product.title }}"
+            class="product-image"
+          />
+          <div class="product-details">
+            <h3 class="title">{{ product.title }}</h3>
+            <div class="flex flex-column row-gap-1 mt-2">
+              <label>
+                Categoria:
+                <span class="font-semibold">{{ product.category }}</span>
+              </label>
+              <label>
+                Avaliação:
+                <span class="font-semibold">{{
+                  product?.rating?.rate || 0
+                }}</span>
+              </label>
+            </div>
+          </div>
+          <div class="product-price">
+            <h3>{{ product.price | currency : "BRL" }}</h3>
+            <div class="flex column-gap-2 mt-3 justify-content-end">
+              <p-button
+                *ngIf="canAction(user.profile, action.DELETE)"
+                tooltipPosition="bottom"
+                pTooltip="Excluir"
+                (click)="delete(product.id)"
+                icon="pi pi-times"
+                severity="danger"
+                [rounded]="true"
+              ></p-button>
+              <p-button
+                *ngIf="canAction(user.profile, action.EDIT)"
+                tooltipPosition="bottom"
+                pTooltip="Editar"
+                (click)="edit(product.id)"
+                icon="pi pi-pencil"
+                severity="secondary"
+                [rounded]="true"
+              ></p-button>
+              <p-button
+                *ngIf="canAction(user.profile, action.VIEW)"
+                tooltipPosition="bottom"
+                pTooltip="Visualizar"
+                (click)="preview(product)"
+                icon="pi pi-search"
+                [rounded]="true"
+              ></p-button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </p-dataView>
+
+    <div class="flex justify-content-end group-buttons">
+      <p-button
+        *ngIf="canAction(user.profile, action.CREATE)"
+        (click)="openModalForNewProduct()"
+        class="btn-create-raised"
+        label="Novo Produto"
+        [raised]="true"
+      ></p-button>
+      <p-button
+        *ngIf="canAction(user.profile, action.CREATE)"
+        (click)="openModalForNewProduct()"
+        class="btn-create-rounded"
+        icon="pi pi-plus"
+        [rounded]="true"
+      ></p-button>
+    </div>
   </div>
 
-  <p-dataView
-    #dv
-    [value]="products"
-    [paginator]="true"
-    [rows]="5"
-    [totalRecords]="totalRecords"
-    [loading]="loading"
-    [sortField]="'title'"
-    [sortOrder]="1"
-    layout="list"
+  <!-- preview dialog -->
+  <p-dialog
+    header="Detalhes do Produto"
+    [(visible)]="visiblePreview"
+    [style]="{ width: '100vh' }"
+    [dismissableMask]="true"
+    [modal]="true"
   >
-    <ng-template pTemplate="header">
-      <div class="header-container">
-        <h2>Catálogo de Produtos</h2>
-      </div>
-    </ng-template>
-
-    <ng-template let-product pTemplate="listItem">
-      <div class="product-item">
-        <img
-          [src]="product.image"
-          alt="{{ product.title }}"
-          class="product-image"
-        />
-        <div class="product-details">
-          <h3 class="title">{{ product.title }}</h3>
-          <div class="flex flex-column row-gap-1 mt-2">
-            <label>
-              Categoria:
-              <span class="font-semibold">{{ product.category }}</span>
-            </label>
-            <label>
-              Avaliação:
-              <span class="font-semibold">{{ product.rating.rate }}</span>
-            </label>
-          </div>
-        </div>
-        <div class="product-price">
-          <h3>{{ product.price | currency : "BRL" }}</h3>
-          <div class="flex column-gap-2 mt-3">
-            <p-button
-              tooltipPosition="bottom"
-              pTooltip="Excluir"
-              (click)="delete(product.id)"
-              icon="pi pi-times"
-              severity="danger"
-              [rounded]="true"
-            ></p-button>
-            <p-button
-              tooltipPosition="bottom"
-              pTooltip="Editar"
-              (click)="edit(product.id)"
-              icon="pi pi-pencil"
-              severity="secondary"
-              [rounded]="true"
-            ></p-button>
-            <p-button
-              tooltipPosition="bottom"
-              pTooltip="Visualizar"
-              (click)="preview(product)"
-              icon="pi pi-search"
-              [rounded]="true"
-            ></p-button>
-          </div>
-        </div>
-      </div>
-    </ng-template>
-  </p-dataView>
-</div>
-
-<!-- preview dialog -->
-<p-dialog
-  header="Detalhes do Produto"
-  [(visible)]="visiblePreview"
-  [style]="{ width: '100vh' }"
-  [dismissableMask]="true"
-  [modal]="true"
-  [responsive]="true"
->
-  <div class="product-item">
-    <img
-      [src]="selectedProduct?.image"
-      alt="{{ selectedProduct?.title }}"
-      class="product-image w-15rem"
-    />
-    <div class="product-details">
-      <h3 class="title">{{ selectedProduct?.title }}</h3>
-      <p>{{ selectedProduct?.description }}</p>
-      <div class="flex flex-column row-gap-1 mt-2">
-        <label>
-          Categoria:
-          <span class="font-semibold">{{ selectedProduct?.category }}</span>
-        </label>
-        <label>
-          Avaliação:
-          <span class="font-semibold">{{ selectedProduct?.rating?.rate }}</span>
-          <span class="font-semibold">
-            ({{ selectedProduct?.rating?.count }} avaliações)</span
-          >
-        </label>
-      </div>
-    </div>
-    <div class="product-price">
-      <h3>{{ selectedProduct?.price | currency : "BRL" }}</h3>
-    </div>
-  </div>
-</p-dialog>
-
-<!-- edit modal -->
-<p-dialog
-  header="Edição do Produto"
-  [(visible)]="visibleEdit"
-  [responsive]="true"
-  [style]="{ width: '100vh' }"
-  [dismissableMask]="true"
-  [modal]="true"
-  [responsive]="true"
->
-  <form [formGroup]="productForm" (ngSubmit)="saveChanges()">
     <div class="product-item">
       <img
         [src]="selectedProduct?.image"
         alt="{{ selectedProduct?.title }}"
-        class="product-image w-20rem"
+        class="product-image w-15rem"
       />
       <div class="product-details">
         <h3 class="title">{{ selectedProduct?.title }}</h3>
+        <p>{{ selectedProduct?.description }}</p>
         <div class="flex flex-column row-gap-1 mt-2">
-          <label for="title">Título</label>
-          <input
-            id="title"
-            type="text"
-            class="p-inputtext"
-            formControlName="title"
-            placeholder="Título do Produto"
-          />
-
-          <label for="category">Categoria</label>
-          <input
-            id="category"
-            type="text"
-            class="p-inputtext"
-            formControlName="category"
-            placeholder="Categoria"
-          />
-
-          <label for="description">Descrição</label>
-          <input
-            id="description"
-            type="text"
-            class="p-inputtext"
-            formControlName="description"
-            placeholder="Descrição"
-          />
-
-          <label for="price">Preço</label>
-          <p-inputNumber
-            id="price"
-            mode="currency"
-            currency="BRL"
-            locale="pt-BR"
-            formControlName="price"
-            placeholder="Preço"
-            class="w-full"
-          ></p-inputNumber>
-
-          <label for="image">Imagem</label>
-          <input
-            id="image"
-            type="text"
-            class="p-inputtext"
-            formControlName="image"
-            placeholder="URL da Imagem"
-          />
+          <label>
+            Categoria:
+            <span class="font-semibold">{{ selectedProduct?.category }}</span>
+          </label>
+          <label>
+            Avaliação:
+            <span class="font-semibold">{{
+              selectedProduct?.rating?.rate || 0
+            }}</span>
+            <span class="font-semibold">
+              ({{ selectedProduct?.rating?.count }} avaliações)</span
+            >
+          </label>
         </div>
       </div>
-    </div>
-    <p-footer>
-      <div class="flex column-gap-2 justify-content-end mr-5 mt-3">
-        <p-button
-          label="Cancelar"
-          [outlined]="true"
-          icon="pi pi-times"
-          severity="danger"
-          (click)="visibleEdit = false"
-        ></p-button>
-        <p-button
-          label="Salvar"
-          [outlined]="true"
-          icon="pi pi-check"
-          type="submit"
-          [disabled]="productForm.invalid"
-        ></p-button>
+      <div class="product-price">
+        <h3>{{ selectedProduct?.price | currency : "BRL" }}</h3>
       </div>
-    </p-footer>
-  </form>
-</p-dialog>
+    </div>
+  </p-dialog>
+
+  <!-- edit modal -->
+  <p-dialog
+    header="Edição do Produto"
+    [(visible)]="visibleEdit"
+    [style]="{ width: '100vh' }"
+    [dismissableMask]="true"
+    [modal]="true"
+  >
+    <form [formGroup]="productForm" (ngSubmit)="saveChanges()">
+      <div class="product-item">
+        <ng-container
+          *ngIf="selectedProduct?.image || inputImageCreate; else emptyImg"
+        >
+          <img
+            [src]="selectedProduct?.image || inputImageCreate"
+            alt="{{ selectedProduct?.title }}"
+            class="product-image w-20rem"
+          />
+        </ng-container>
+        <ng-template #emptyImg>
+          <img
+            src="../../../assets/empty-image.jpg"
+            class="product-image w-20rem"
+          />
+        </ng-template>
+        <div class="product-details">
+          <h3 class="title">{{ selectedProduct?.title }}</h3>
+          <div class="flex flex-column row-gap-1 mt-2">
+            <label for="title">Título</label>
+            <input
+              id="title"
+              type="text"
+              class="p-inputtext mb-2"
+              formControlName="title"
+              placeholder="Título do Produto"
+            />
+
+            <label for="category">Categoria</label>
+            <input
+              id="category"
+              type="text"
+              class="p-inputtext mb-2"
+              formControlName="category"
+              placeholder="Categoria"
+            />
+
+            <label for="description">Descrição</label>
+
+            <textarea
+              id="description"
+              class="p-inputtext mb-2"
+              formControlName="description"
+              placeholder="Descrição"
+              rows="5"
+              cols="30"
+              pInputTextarea
+            ></textarea>
+
+            <label for="price">Preço</label>
+            <p-inputNumber
+              id="price"
+              mode="currency"
+              currency="BRL"
+              locale="pt-BR"
+              formControlName="price"
+              placeholder="Preço"
+              class="w-full mb-2"
+            ></p-inputNumber>
+
+            <label for="image">Imagem</label>
+
+            <input
+              id="image"
+              type="text"
+              class="p-inputtext"
+              placeholder="Nome do arquivo"
+              formControlName="fileName"
+              readonly
+            />
+
+            <div class="ml-auto">
+              <p-fileUpload
+                #fileUploader
+                name="image"
+                accept="image/*"
+                [maxFileSize]="1000000"
+                mode="basic"
+                [customUpload]="true"
+                chooseLabel="Selecionar Imagem"
+                (uploadHandler)="onImageUpload($event, fileUploader)"
+                class="w-full"
+              ></p-fileUpload>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p-footer>
+        <div class="flex column-gap-2 justify-content-end mr-5 mt-3">
+          <p-button
+            label="Cancelar"
+            icon="pi pi-times"
+            severity="danger"
+            (click)="visibleEdit = false"
+          ></p-button>
+          <p-button
+            label="Salvar"
+            icon="pi pi-check"
+            type="submit"
+            [disabled]="productForm.invalid"
+          ></p-button>
+        </div>
+      </p-footer>
+    </form>
+  </p-dialog>
+</ng-container>

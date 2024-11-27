@@ -10,7 +10,9 @@ import { CatalogComponent } from './catalog.component';
 import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
 import { DialogModule } from 'primeng/dialog';
+import { FileUploadModule } from 'primeng/fileupload';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MenubarModule } from 'primeng/menubar';
 
 const PRIMENG_MODULES = [
@@ -18,7 +20,9 @@ const PRIMENG_MODULES = [
   DataViewModule,
   ButtonModule,
   DialogModule,
-  InputNumberModule
+  InputNumberModule,
+  FileUploadModule,
+  InputTextareaModule
 ]
 
 @NgModule({

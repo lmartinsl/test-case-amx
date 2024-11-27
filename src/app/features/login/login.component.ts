@@ -10,8 +10,8 @@ import {
   switchMap,
 } from 'rxjs';
 import { AppService } from 'src/app/app.service';
-import { ProfileEnum } from 'src/app/core/enums/profile.enum';
 import { User } from 'src/app/core/models/user.interface';
+import { UtilsService } from 'src/app/shared/utils/utils.service';
 import { NotificationAlertService } from './../../core/services/notification-alert.service';
 import { UserService } from './../../core/services/user.service';
 
@@ -36,6 +36,7 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
     private _appService: AppService,
     private _notificationAlertService: NotificationAlertService,
     private _router: Router,
+    private _utilsService: UtilsService
   ) {}
 
   ngAfterViewInit(): void {
@@ -55,7 +56,7 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
         )
         .subscribe({
           next: (user) => {
-            if (user) this.profileMap(user)
+            if (user) this.profileMap(user);
           },
           error: (error) =>
             this._notificationAlertService.error('Erro', error.message),
@@ -89,14 +90,8 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
   }
 
   profileMap(user: User): void {
-    const profileMap = new Map<ProfileEnum, string>([
-      [ProfileEnum.ADMIN, 'Perfil: Administrador'],
-      [ProfileEnum.SELLER, 'Perfil: Vendedor'],
-      [ProfileEnum.CLIENT, 'Perfil: Cliente'],
-    ]);
-
     this.currentUser = user;
-    this.inputProfile = profileMap.get(user.profile);
+    this.inputProfile = this._utilsService.profileMap(user.profile);
   }
 
   ngOnDestroy(): void {

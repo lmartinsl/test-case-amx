@@ -19,7 +19,7 @@ export class CatalogService {
     return this.http.get<Product>(`${this.apiUrl}/${id}`);
   }
 
-  createProduct(product: any): Observable<Product> {
+  createProduct(product: Product): Observable<Product> {
     return this.http.post<Product>(this.apiUrl, product);
   }
 
