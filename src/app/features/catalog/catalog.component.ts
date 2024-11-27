@@ -1,4 +1,10 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   debounceTime,
@@ -25,7 +31,9 @@ export class CatalogComponent implements OnInit, OnDestroy {
   subscriptions: Subscription = new Subscription();
 
   products: Product[] = [];
+  categories: { name: string }[] = [];
   totalRecords: number = 0;
+  rows: number = 5;
 
   inputFilter: string = '';
 
@@ -57,6 +65,11 @@ export class CatalogComponent implements OnInit, OnDestroy {
     private _notificationAlertService: NotificationAlertService
   ) {
     this.currentUser$ = this._appService.getCurrentUser();
+    this.categories = this._utilsService
+      .getProductCategories()
+      .map((category) => ({
+        name: category,
+      }));
 
     this.productForm = this._fb.group({
       title: ['', Validators.required],
@@ -69,7 +82,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
 
     this.subscriptions.add(
       this.inputFilterSubject
-        .pipe(debounceTime(700), distinctUntilChanged())
+        .pipe(debounceTime(500), distinctUntilChanged())
         .subscribe({
           next: (filterValue) => {
             this.products = this.originalProducts.filter((product) =>
@@ -84,6 +97,12 @@ export class CatalogComponent implements OnInit, OnDestroy {
     this.loadProducts();
   }
 
+  @HostListener('window:resize', ['$event'])
+  onResize(): void {
+    const width = window.innerWidth;
+    this.rows = width <= 1058 ? 2 : 5;
+  }
+
   canAction(profile: ProfileEnum, action: string): boolean {
     const permissions = {
       [ProfileEnum.ADMIN]: ['edit', 'delete', 'create', 'view'],
@@ -96,6 +115,10 @@ export class CatalogComponent implements OnInit, OnDestroy {
 
   getProfileMap(profile: ProfileEnum): string {
     return this._utilsService.profileMap(profile);
+  }
+
+  formatReal(value: number): string | undefined {
+    return this._utilsService.formatReal(value);
   }
 
   filterProducts(searchTerm: string): void {
@@ -238,6 +261,9 @@ export class CatalogComponent implements OnInit, OnDestroy {
         })
       );
     }
+
+    this.inputFilter = '';
+    this.filterProducts(this.inputFilter);
   }
 
   onImageUpload(event: any, fileUploader: any): void {

@@ -5,20 +5,28 @@
         <span class="font-bold">{{ user.name }}</span>
         <span class="font-light">{{ getProfileMap(user.profile) }}</span>
       </div>
-      <input
-        type="text"
-        class="p-inputtext"
-        [(ngModel)]="inputFilter"
-        placeholder="Buscar produtos..."
-        (input)="filterProducts(inputFilter)"
-      />
+      <div class="flex flex-column">
+        <input
+          type="text"
+          class="p-inputtext"
+          [(ngModel)]="inputFilter"
+          placeholder="Buscar produtos..."
+          (input)="filterProducts(inputFilter)"
+        />
+        <span
+          class="info-text"
+          *ngIf="inputFilter.length > 0 && inputFilter.length <= 3"
+        >
+          Insira pelo menos 3 caracteres
+        </span>
+      </div>
     </div>
 
     <p-dataView
       #dv
       [value]="products"
       [paginator]="true"
-      [rows]="5"
+      [rows]="rows"
       [totalRecords]="totalRecords"
       [loading]="loading"
       [sortField]="'title'"
@@ -54,7 +62,7 @@
             </div>
           </div>
           <div class="product-price">
-            <h3>{{ product.price | currency : "BRL" }}</h3>
+            <h3>{{ formatReal(product.price) }}</h3>
             <div class="flex column-gap-2 mt-3 justify-content-end">
               <p-button
                 *ngIf="canAction(user.profile, action.DELETE)"
@@ -140,7 +148,7 @@
         </div>
       </div>
       <div class="product-price">
-        <h3>{{ selectedProduct?.price | currency : "BRL" }}</h3>
+        <h3>{{ formatReal(selectedProduct?.price || 0) }}</h3>
       </div>
     </div>
   </p-dialog>
@@ -183,13 +191,14 @@
             />
 
             <label for="category">Categoria</label>
-            <input
+            <p-dropdown
               id="category"
-              type="text"
-              class="p-inputtext mb-2"
               formControlName="category"
-              placeholder="Categoria"
-            />
+              [options]="categories"
+              optionLabel="name"
+              placeholder="Selecione uma categoria"
+              class="mb-2"
+            ></p-dropdown>
 
             <label for="description">Descrição</label>
 
