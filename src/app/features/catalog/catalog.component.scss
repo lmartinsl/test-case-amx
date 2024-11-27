@@ -32,7 +32,7 @@ p {
     font-size: 12px;
   }
 
-  padding: 1rem 10rem 5rem;
+  padding: 1rem 10rem 6rem;
 
   .product-item {
     display: flex;
@@ -88,18 +88,55 @@ p {
   }
 }
 
-.group-buttons {
+.group-buttons-create {
   position: fixed;
   bottom: 2rem;
   right: 10rem;
   margin-top: 2rem;
+  z-index: 9;
 }
 
-.btn-create-rounded {
+.group-buttons-out {
+  position: fixed;
+  bottom: 2rem;
+  left: 10rem;
+  margin-top: 2rem;
+  z-index: 9;
+}
+
+.btn-create-rounded-out,
+.btn-create-rounded-create {
   display: none;
 }
 
+@media (min-width: 1058px) {
+  .back-footer {
+    background-color: #fff;
+    height: 6rem;
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+  }
+
+  ::ng-deep {
+    .p-paginator {
+      position: fixed;
+      bottom: 1.5rem;
+      width: 100%;
+      left: 0;
+      z-index: 8;
+      background-color: transparent;
+    }
+  }
+}
+
 @media (max-width: 1058px) {
+
+  .back-footer {
+    display: none;
+  }
+
   .info-user {
     flex-direction: row !important;
     justify-content: space-between;
@@ -110,11 +147,13 @@ p {
     row-gap: 0.5rem;
   }
 
-  .btn-create-raised {
+  .btn-create-raised-out,
+  .btn-create-raised-create {
     display: none;
   }
 
-  .btn-create-rounded {
+  .btn-create-rounded-create {
+    z-index: 999;
     display: block;
     position: fixed;
     right: 1.5rem;
@@ -122,8 +161,17 @@ p {
     z-index: 1000;
   }
 
+  .btn-create-rounded-out {
+    z-index: 999;
+    display: block;
+    position: fixed;
+    left: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 1000;
+  }
+
   .container {
-    padding: 0rem 0rem 5rem;
+    padding: 0rem 0rem 3rem;
 
     .product-item {
       flex-direction: column;

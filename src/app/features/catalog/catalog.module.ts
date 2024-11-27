@@ -15,6 +15,8 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { MenubarModule } from 'primeng/menubar';
+import { PaginatorModule } from 'primeng/paginator';
+import { RatingModule } from 'primeng/rating';
 
 const PRIMENG_MODULES = [
   MenubarModule,
@@ -24,7 +26,9 @@ const PRIMENG_MODULES = [
   InputNumberModule,
   FileUploadModule,
   InputTextareaModule,
-  DropdownModule
+  DropdownModule,
+  RatingModule,
+  PaginatorModule
 ]
 
 @NgModule({

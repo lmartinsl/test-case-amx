@@ -6,6 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import {
   debounceTime,
   distinctUntilChanged,
@@ -35,6 +36,8 @@ export class CatalogComponent implements OnInit, OnDestroy {
   totalRecords: number = 0;
   rows: number = 5;
 
+  defaultRate: number = 0;
+
   inputFilter: string = '';
 
   loading: boolean = false;
@@ -62,7 +65,8 @@ export class CatalogComponent implements OnInit, OnDestroy {
     private _catalogService: CatalogService,
     private _fb: FormBuilder,
     private _cdr: ChangeDetectorRef,
-    private _notificationAlertService: NotificationAlertService
+    private _notificationAlertService: NotificationAlertService,
+    private _router: Router
   ) {
     this.currentUser$ = this._appService.getCurrentUser();
     this.categories = this._utilsService
@@ -78,6 +82,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
       price: [0, [Validators.required, Validators.min(0)]],
       image: ['', Validators.required],
       fileName: [''],
+      rating: [''],
     });
 
     this.subscriptions.add(
@@ -199,6 +204,7 @@ export class CatalogComponent implements OnInit, OnDestroy {
           price: product.price,
           image: product.image,
           fileName: product.fileName,
+          rating: product.rating,
         });
 
         this.visibleEdit = true;
@@ -208,11 +214,10 @@ export class CatalogComponent implements OnInit, OnDestroy {
   }
 
   saveChanges(): void {
-    if (this.productForm.invalid) {
-      return;
-    }
+    if (this.productForm.invalid) return;
 
-    const productData: Product = { ...this.productForm.value };
+    const rating = this.productForm.value['rating'] || { count: 0, rate: 0 };
+    const productData: Product = { ...this.productForm.value, rating };
 
     if (this.isEditMode && this.selectedProduct) {
       this.subscriptions.add(
@@ -293,6 +298,11 @@ export class CatalogComponent implements OnInit, OnDestroy {
   preview(product: Product): void {
     this.selectedProduct = product;
     this.visiblePreview = true;
+  }
+
+  logout(): void {
+    this._appService.setCurrentUser(undefined);
+    this._router.navigateByUrl('login');
   }
 
   ngOnDestroy(): void {

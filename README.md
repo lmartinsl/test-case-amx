@@ -38,7 +38,7 @@ Ensure you have the following installed:
 
 3. **Start the JSON Server:**
    ```bash
-   npm run json-server
+   json-server --watch db.json
    ```
    This will launch a mock RESTful API to handle CRUD operations for products.
 

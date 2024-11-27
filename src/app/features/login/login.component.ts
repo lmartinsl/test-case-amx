@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   catchError,
@@ -20,7 +20,7 @@ import { UserService } from './../../core/services/user.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent implements AfterViewInit, OnDestroy {
+export class LoginComponent implements OnDestroy, OnInit {
   currentUser: User | undefined;
 
   inputUserName: string | undefined;
@@ -39,7 +39,7 @@ export class LoginComponent implements AfterViewInit, OnDestroy {
     private _utilsService: UtilsService
   ) {}
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.subscription.add(
       this.userNameSubject
         .pipe(

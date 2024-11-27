@@ -2,7 +2,6 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   catchError,
-  delay,
   map,
   Observable,
   throwError
@@ -19,7 +18,6 @@ export class UserService {
 
   checkUserByUserName(userName: string): Observable<User> {
     return this.http.get<User[]>(this.apiUrl).pipe(
-      delay(1000),
       map((users: User[]) => {
         const user = users.find((u) => u.userName === userName);
         if (!user) {

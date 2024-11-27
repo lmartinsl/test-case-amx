@@ -8,7 +8,7 @@ import { User } from './core/models/user.interface';
 export class AppService {
   subjectUser$ = new BehaviorSubject<User | undefined>(undefined);
 
-  setCurrentUser(user: User): void {
+  setCurrentUser(user: User | undefined): void {
     this.subjectUser$.next(user);
   }
 
