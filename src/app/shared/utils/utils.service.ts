@@ -16,13 +16,16 @@ export class UtilsService {
   }
 
   formatReal(value: number): string | undefined {
+    if (isNaN(value) || typeof value !== 'number') {
+      return undefined;
+    }
     try {
-      return value.toLocaleString('pt-br', {
+      return value.toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL',
       });
     } catch (e) {
-      return;
+      return undefined;
     }
   }
 
