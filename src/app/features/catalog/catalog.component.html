@@ -51,7 +51,7 @@
             <div class="flex flex-column row-gap-1 mt-2">
               <label>
                 Categoria:
-                <span class="font-semibold">{{ product.category }}</span>
+                <span class="font-semibold">{{ product.category.name }}</span>
               </label>
               <label>
                 Avaliação:
@@ -134,7 +134,9 @@
         <div class="flex flex-column row-gap-1 mt-2">
           <label>
             Categoria:
-            <span class="font-semibold">{{ selectedProduct?.category }}</span>
+            <span class="font-semibold">{{
+              selectedProduct?.category || selectedProduct?.category?.name
+            }}</span>
           </label>
           <label>
             Avaliação:
