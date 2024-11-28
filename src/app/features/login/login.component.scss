@@ -1,0 +1,52 @@
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+  flex-direction: column;
+  
+  @media (max-width: 1058px) {
+    .input-container {
+      width: 90%!important;
+    }
+  }
+  
+  .input-container {
+    background: #7191cde7;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 50vh;
+    min-height: 20vh;
+    align-content: center;
+    text-align: center;
+
+
+    input {
+      width: 100%;
+    }
+
+    .logo-amx {
+      width: 15rem;
+      margin-bottom: 2rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .password-container {
+      margin-top: 1rem;
+      width: 100%;
+
+      .danger {
+        color: rgb(153, 20, 20);
+      }
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { authGuard } from './core/guard/auth.guard';
 import { LoginComponent } from './features/login/login.component';
 
 const routes: Routes = [
@@ -13,6 +14,7 @@ const routes: Routes = [
     path: 'catalog',
     loadChildren: () =>
       import('./features/catalog/catalog.module').then((m) => m.CatalogModule),
+    canActivate: [authGuard],
   },
   { path: '**', component: LoginComponent },
 ];

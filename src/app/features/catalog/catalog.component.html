@@ -1,1 +1,326 @@
-<p>catalog works!</p>
+<ng-container *ngIf="currentUser$ | async as user">
+  <div class="container">
+    <div class="search-term flex justify-content-between mb-3">
+      <div class="info-user flex flex-column row-gap-2">
+        <span class="font-bold">{{ user.name }}</span>
+        <span class="font-light">{{ getProfileMap(user.profile) }}</span>
+      </div>
+      <div class="flex flex-column">
+        <input
+          type="text"
+          class="p-inputtext"
+          [(ngModel)]="inputFilter"
+          placeholder="Buscar produtos..."
+          (input)="filterProducts(inputFilter)"
+        />
+        <span
+          class="info-text"
+          *ngIf="inputFilter.length > 0 && inputFilter.length <= 3"
+        >
+          Insira pelo menos 3 caracteres
+        </span>
+      </div>
+    </div>
+
+    <p-dataView
+      #dv
+      [value]="products"
+      [paginator]="true"
+      [rows]="rows"
+      [totalRecords]="totalRecords"
+      [loading]="loading"
+      [sortField]="'title'"
+      [sortOrder]="1"
+      layout="list"
+    >
+      <ng-template pTemplate="header">
+        <div class="header-container">
+          <h2>Catálogo de Produtos</h2>
+        </div>
+      </ng-template>
+
+      <ng-template let-product pTemplate="listItem">
+        <div class="product-item">
+          <img
+            [src]="product.image"
+            alt="{{ product.title }}"
+            class="product-image"
+          />
+          <div class="product-details">
+            <h3 class="title">{{ product.title }}</h3>
+            <div class="flex flex-column row-gap-1 mt-2">
+              <label>
+                Categoria:
+                <span class="font-semibold">{{ product.category.name }}</span>
+              </label>
+
+              <ng-container *ngIf="product?.rating?.rate > 0; else emptyRate">
+                <p-rating
+                  class="my-2"
+                  [disabled]="true"
+                  [(ngModel)]="product?.rating.rate"
+                  [cancel]="false"
+                ></p-rating>
+              </ng-container>
+              <ng-template #emptyRate>
+                <p-rating
+                  class="my-2"
+                  [disabled]="true"
+                  [(ngModel)]="defaultRate"
+                  [cancel]="false"
+                ></p-rating>
+              </ng-template>
+              <label>
+                Avaliação:
+                <span class="font-semibold">{{
+                  product?.rating?.rate || 0
+                }}</span>
+              </label>
+            </div>
+          </div>
+          <div class="product-price">
+            <h3>{{ formatReal(product.price) }}</h3>
+            <div class="flex column-gap-2 mt-3 justify-content-end">
+              <p-button
+                *ngIf="canAction(user.profile, action.DELETE)"
+                tooltipPosition="bottom"
+                pTooltip="Excluir"
+                (click)="delete(product.id)"
+                icon="pi pi-times"
+                severity="danger"
+                [rounded]="true"
+              ></p-button>
+              <p-button
+                *ngIf="canAction(user.profile, action.EDIT)"
+                tooltipPosition="bottom"
+                pTooltip="Editar"
+                (click)="edit(product.id)"
+                icon="pi pi-pencil"
+                severity="secondary"
+                [rounded]="true"
+              ></p-button>
+              <p-button
+                *ngIf="canAction(user.profile, action.VIEW)"
+                tooltipPosition="bottom"
+                pTooltip="Detalhes"
+                (click)="preview(product)"
+                icon="pi pi-plus"
+                [rounded]="true"
+              ></p-button>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </p-dataView>
+
+    <div class="back-footer"></div>
+
+    <div class="flex justify-content-end group-buttons-out">
+      <p-button
+        (click)="logout()"
+        class="btn-create-raised-out"
+        [outlined]="true"
+        label="Sair"
+        [raised]="true"
+      ></p-button>
+      <p-button
+        (click)="logout()"
+        class="btn-create-rounded-out"
+        icon="pi pi-sign-out"
+        [rounded]="true"
+        [outlined]="true"
+      ></p-button>
+    </div>
+
+    <div class="flex justify-content-end group-buttons-create">
+      <p-button
+        *ngIf="canAction(user.profile, action.CREATE)"
+        (click)="openModalForNewProduct()"
+        class="btn-create-raised-create"
+        label="Novo Produto"
+        [raised]="true"
+      ></p-button>
+      <p-button
+        *ngIf="canAction(user.profile, action.CREATE)"
+        (click)="openModalForNewProduct()"
+        class="btn-create-rounded-create"
+        icon="pi pi-plus"
+        [rounded]="true"
+      ></p-button>
+    </div>
+  </div>
+
+  <!-- preview dialog -->
+  <p-dialog
+    header="Detalhes do Produto"
+    [(visible)]="visiblePreview"
+    [style]="{ width: '100vh' }"
+    [dismissableMask]="true"
+    [modal]="true"
+  >
+    <div class="product-item">
+      <img
+        [src]="selectedProduct?.image"
+        alt="{{ selectedProduct?.title }}"
+        class="product-image w-15rem"
+      />
+      <div class="product-details">
+        <h3 class="title">{{ selectedProduct?.title }}</h3>
+        <p>{{ selectedProduct?.description }}</p>
+        <div class="flex flex-column row-gap-1 mt-2">
+          <label>
+            Categoria:
+            <span class="font-semibold">{{
+              selectedProduct?.category?.name || selectedProduct?.category
+            }}</span>
+          </label>
+          <label>
+            Avaliação:
+            <span class="font-semibold">{{
+              selectedProduct?.rating?.rate || 0
+            }}</span>
+            <span class="font-semibold">
+              ({{ selectedProduct?.rating?.count }} avaliações)</span
+            >
+          </label>
+
+          <ng-container *ngIf="selectedProduct && selectedProduct.rating.rate > 0; else emptyRate">
+            <p-rating
+              class="my-2"
+              [disabled]="true"
+              [(ngModel)]="selectedProduct.rating.rate"
+              [cancel]="false"
+            ></p-rating>
+          </ng-container>
+          <ng-template #emptyRate>
+            <p-rating
+              class="my-2"
+              [disabled]="true"
+              [(ngModel)]="defaultRate"
+              [cancel]="false"
+            ></p-rating>
+          </ng-template>
+        </div>
+      </div>
+      <div class="product-price">
+        <h3>{{ formatReal(selectedProduct?.price || 0) }}</h3>
+      </div>
+    </div>
+  </p-dialog>
+
+  <!-- edit modal -->
+  <p-dialog
+    header="Edição do Produto"
+    [(visible)]="visibleEdit"
+    [style]="{ width: '100vh' }"
+    [dismissableMask]="true"
+    [modal]="true"
+  >
+    <form [formGroup]="productForm" (ngSubmit)="saveChanges()">
+      <div class="product-item">
+        <ng-container
+          *ngIf="selectedProduct?.image || inputImageCreate; else emptyImg"
+        >
+          <img
+            [src]="selectedProduct?.image || inputImageCreate"
+            alt="{{ selectedProduct?.title }}"
+            class="product-image w-20rem"
+          />
+        </ng-container>
+        <ng-template #emptyImg>
+          <img
+            src="../../../assets/empty-image.jpg"
+            class="product-image w-20rem"
+          />
+        </ng-template>
+        <div class="product-details">
+          <h3 class="title">{{ selectedProduct?.title }}</h3>
+          <div class="flex flex-column row-gap-1 mt-2">
+            <label for="title">Título</label>
+            <input
+              id="title"
+              type="text"
+              class="p-inputtext mb-2"
+              formControlName="title"
+              placeholder="Título do Produto"
+            />
+
+            <label for="category">Categoria</label>
+            <p-dropdown
+              id="category"
+              formControlName="category"
+              [options]="categories"
+              optionLabel="name"
+              placeholder="Selecione uma categoria"
+              class="mb-2"
+            ></p-dropdown>
+
+            <label for="description">Descrição</label>
+
+            <textarea
+              id="description"
+              class="p-inputtext mb-2"
+              formControlName="description"
+              placeholder="Descrição"
+              rows="5"
+              cols="30"
+              pInputTextarea
+            ></textarea>
+
+            <label for="price">Preço</label>
+            <p-inputNumber
+              id="price"
+              mode="currency"
+              currency="BRL"
+              locale="pt-BR"
+              formControlName="price"
+              placeholder="Preço"
+              class="w-full mb-2"
+            ></p-inputNumber>
+
+            <label for="image">Imagem</label>
+
+            <input
+              id="image"
+              type="text"
+              class="p-inputtext"
+              placeholder="Nome do arquivo"
+              formControlName="fileName"
+              readonly
+            />
+
+            <div class="ml-auto">
+              <p-fileUpload
+                #fileUploader
+                name="image"
+                accept="image/*"
+                [maxFileSize]="1000000"
+                mode="basic"
+                [customUpload]="true"
+                chooseLabel="Selecionar Imagem"
+                (uploadHandler)="onImageUpload($event, fileUploader)"
+                class="w-full"
+              ></p-fileUpload>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p-footer>
+        <div class="flex column-gap-2 justify-content-end mr-5 mt-3">
+          <p-button
+            label="Cancelar"
+            icon="pi pi-times"
+            severity="danger"
+            (click)="visibleEdit = false"
+          ></p-button>
+          <p-button
+            label="Salvar"
+            icon="pi pi-check"
+            type="submit"
+            [disabled]="productForm.invalid"
+          ></p-button>
+        </div>
+      </p-footer>
+    </form>
+  </p-dialog>
+</ng-container>

@@ -1,1 +1,52 @@
-<p>login works!</p>
+<div class="login-container">
+  <div class="input-container">
+    <img class="logo-amx" src="../../../assets/amx-logo.png" alt="" />
+
+    <label class="text-white" *ngIf="currentUser" for="password"
+      >Olá, {{ currentUser.name }}.</label
+    >
+
+    <div class="flex column-gap-3 align-items-center">
+      <i class="pi pi-user text-white" style="font-size: 1.5rem"></i>
+      <input
+        pInputText
+        placeholder="Informe seu nome de usuário"
+        [(ngModel)]="inputUserName"
+        (input)="checkUser(inputUserName)"
+        [disabled]="currentUser !== undefined"
+      />
+    </div>
+
+    <div *ngIf="currentUser" class="password-container">
+      <div class="flex column-gap-3 align-items-center">
+        <i class="pi pi-sitemap text-white" style="font-size: 1.5rem"></i>
+        <input pInputText [(ngModel)]="inputProfile" disabled />
+      </div>
+
+      <div class="flex column-gap-1 mt-3">
+        <input
+          pInputText
+          [(ngModel)]="inputPassword"
+          placeholder="Digite sua senha"
+          type="password"
+        />
+
+        <p-button
+          tooltipPosition="bottom"
+          pTooltip="Cancelar e inserir outro usuário"
+          icon="pi pi-times"
+          styleClass="p-button-danger p-button-sm"
+          (click)="cancel()"
+        ></p-button>
+        <p-button
+          tooltipPosition="bottom"
+          pTooltip="Entrar"
+          icon="pi pi-check"
+          (click)="submit()"
+          styleClass="p-button-sm"
+          [disabled]="!inputPassword"
+        ></p-button>
+      </div>
+    </div>
+  </div>
+</div>
