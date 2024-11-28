@@ -183,6 +183,23 @@
               ({{ selectedProduct?.rating?.count }} avaliações)</span
             >
           </label>
+
+          <ng-container *ngIf="selectedProduct && selectedProduct.rating.rate > 0; else emptyRate">
+            <p-rating
+              class="my-2"
+              [disabled]="true"
+              [(ngModel)]="selectedProduct.rating.rate"
+              [cancel]="false"
+            ></p-rating>
+          </ng-container>
+          <ng-template #emptyRate>
+            <p-rating
+              class="my-2"
+              [disabled]="true"
+              [(ngModel)]="defaultRate"
+              [cancel]="false"
+            ></p-rating>
+          </ng-template>
         </div>
       </div>
       <div class="product-price">
